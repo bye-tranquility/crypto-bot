@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 from globals import Globals
 
+
 class WebScraper:
     def __init__(self):
         self.url = Globals.url
@@ -21,18 +22,25 @@ class WebScraper:
         scraped_data = []
 
         for tr in trs:
-            name_line, price_line, hour_dynamics_line, day_dynamics_line = tr.contents[1:5]
-
-            name = name_line.span.string
-            price = price_line.div.string
-            hour_dynamics = hour_dynamics_line.span.string
-            day_dynamics = day_dynamics_line.span.string
+            parts = tr.contents[1].text.split('(')  # 'Bitcoin(BTC)'
+            name = parts[0]  # 'Bitcoin'
+            symbol = parts[1].replace(')', '')  # 'BTC'
+            price = tr.contents[2].text
+            hour_dynamics = tr.contents[3].text
+            day_dynamics = tr.contents[4].text
+            week_dynamics = tr.contents[5].text
+            market_cap = tr.contents[6].text
+            day_volume = tr.contents[7].text
 
             scraped_data.append({
                 "name": name,
+                "symbol": symbol,
                 "price": price,
                 "hour_dynamics": hour_dynamics,
-                "day_dynamics": day_dynamics
+                "day_dynamics": day_dynamics,
+                "week_dynamics": week_dynamics,
+                "market_cap": market_cap,
+                "day_volume": day_volume
             })
 
         return scraped_data
