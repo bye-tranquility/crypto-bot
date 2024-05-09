@@ -33,15 +33,15 @@ async def cmd_help(message: Message):
 @router.message(Command('english', 'eng'))
 async def cmd_switch_to_eng(message: Message):
     Globals.language = 'eng'
-    await message.answer('You have switched to English, '
-                         'enter /help to get the list of commands.')
+    await message.answer('You have switched the language to English. '
+                         'Enter /help to get the list of commands.')
 
 
 @router.message(Command('russian', 'rus'))
 async def cmd_switch_to_rus(message: Message):
     Globals.language = 'rus'
-    await message.answer('Вы переключились на русский язык, '
-                         'введите /help, чтобы получить список комманд.')
+    await message.answer('Вы переключились на русский язык. '
+                         'Введите /help, чтобы получить список комманд.')
 
 
 @router.message(Command('rates'))
@@ -145,3 +145,16 @@ async def cmd_info(message: Message, command: CommandObject):
         else:
             info += 'Currency not found. Please make sure the typed-in name is correct.'
     await message.answer(info, parse_mode="Markdown")
+
+@router.message()
+async def cmd_unknown(message: Message):
+    if message.text.startswith('/'):
+        if Globals.language == 'rus':
+            await message.answer("Введенная команда не распознана. Введите /help для получения списка команд.")
+        else:
+            await message.answer("Current command not recognized. Enter /help to get the list of commands.")
+    else:
+        if Globals.language == 'rus':
+            await message.answer("Извините, я не могу распознать ваш запрос. Введите /help для получения списка команд.")
+        else:
+            await message.answer("I am sorry, I cannot recognize your request. Enter /help to get the list of commands.")
