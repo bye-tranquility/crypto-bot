@@ -15,29 +15,29 @@ async def cmd_help(message: Message):
             '*Данный бот собирает актуальную информацию о курсе криптовалют со страницы сайта Forbes.*\n\n'
             'Команды:\n'
             '/rates – вывести информацию о криптовалютах\n'
-            '/info + {_название/символ_} – узнать больше о криптовалюте\n'
-            '/russian или /rus – переключение на русский язык\n'
-            '/english или /eng – переключение на английский язык\n')
+            '/info <_название/символ_> – узнать больше о криптовалюте\n'
+            '/rus – переключение на русский язык\n'
+            '/eng – переключение на английский язык\n')
         await message.answer(info, parse_mode="Markdown")
     else:
         info = (
             '*This bot gathers the latest cryptocurrency exchange rate information from the Forbes website.*\n\n'
             'Commands:\n'
             '/rates – display information about cryptocurrencies\n'
-            '/info + {_name/symbol_} – learn more about a cryptocurrency\n'
-            '/russian or /rus – set the language to Russian\n'
-            '/english or /eng – set the language to English\n')
+            '/info <_name/symbol_> – learn more about a cryptocurrency\n'
+            '/rus – set the language to Russian\n'
+            '/eng – set the language to English\n')
         await message.answer(info, parse_mode="Markdown")
 
 
-@router.message(Command('english', 'eng'))
+@router.message(Command('eng'))
 async def cmd_switch_to_eng(message: Message):
     Globals.language = 'eng'
     await message.answer('You have switched the language to English. '
                          'Enter /help to get the list of commands.')
 
 
-@router.message(Command('russian', 'rus'))
+@router.message(Command('rus'))
 async def cmd_switch_to_rus(message: Message):
     Globals.language = 'rus'
     await message.answer('Вы переключились на русский язык. '
@@ -50,7 +50,11 @@ async def cmd_rates(message: Message):
     data = scraper.scrape()
     info = ''
     for currency in data:
-        info += f"*{currency['name']}/{currency['symbol']}:* {currency['price']}\n"
+        week_dynamics_value = float(
+            currency['week_dynamics'].strip('%').replace(
+                ',', '.'))
+        week_emoji = "📈" if week_dynamics_value > 0 else "📉" if week_dynamics_value < 0 else "🟰"
+        info += f"{week_emoji} *{currency['name']} / {currency['symbol']}:* {currency['price']}\n"
     await message.answer(info, parse_mode="Markdown")
 
 
@@ -141,18 +145,21 @@ async def cmd_info(message: Message, command: CommandObject):
 
     if info == '':
         if Globals.language == 'rus':
-            info += 'Валюта не найдена. Пожалуйста, убедитесь, что название введено правильно.'
+            info += 'Валюта не найдена. Пожалуйста, убедитесь, что название введено правильно.\n\n'
+            info += 'Также можете воспользоваться командой /help для получения справочной информации.'
         else:
-            info += 'Currency not found. Please make sure the typed-in name is correct.'
+            info += 'Currency not found. Please make sure the typed-in name is correct.\n\n'
+            info += 'You can also use the /help command for assistance.'
     await message.answer(info, parse_mode="Markdown")
+
 
 @router.message()
 async def cmd_unknown(message: Message):
     if message.text.startswith('/'):
         if Globals.language == 'rus':
-            await message.answer("Введенная команда не распознана. Введите /help для получения списка команд.")
+            await message.answer("Команда не распознана. Введите /help для получения списка команд.")
         else:
-            await message.answer("Current command not recognized. Enter /help to get the list of commands.")
+            await message.answer("Command not recognized. Enter /help to get the list of commands.")
     else:
         if Globals.language == 'rus':
             await message.answer("Извините, я не могу распознать ваш запрос. Введите /help для получения списка команд.")

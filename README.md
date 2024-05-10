@@ -1,4 +1,4 @@
-# CryptoBot
+    # CryptoBot
 
 > Телеграм-бот работает по технологии веб-скрапинга и позволяет получить актуальную информацию о курсе криптовалют, собираемую в режиме реального времени со страницы сайта [Forbes](https://www.forbes.com/digital-assets/crypto-prices/)
 
@@ -6,7 +6,8 @@
 ```
 git clone https://github.com/bye-tranquility/crypto-bot.git
 cd crypto-bot/
-# TODO Docker part
+docker build -t tg ./
+docker run -d --name tgbot -e TELEGRAM_API_TOKEN=<token> tg
 ```
 
 ## Список команд бота
