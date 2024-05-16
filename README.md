@@ -6,16 +6,17 @@
 ```
 git clone https://github.com/bye-tranquility/crypto-bot.git
 cd crypto-bot/
-# TODO Docker part
+docker build -t tg ./
+docker run -d --name tgbot -e TELEGRAM_API_TOKEN=<token> tg
 ```
 
 ## Список команд бота
 
 - `/start` - начать работу с ботом, главное меню
 - `/rates` - узнать курс криптовалют
-- `/info` - о боте
-- `/russian` - переключение на русский язык
-- `/english` - переключение на английский язык
+- `/info <название/символ>` – узнать больше о криптовалюте
+- `/rus` - переключение на русский язык
+- `/eng` - переключение на английский язык
 - `/help` - список доступных команд
 
 ***
